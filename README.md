@@ -98,7 +98,7 @@ described as follows:
 | **schema_column_mode**        | Schema column mode.       | N         |
 
 
-### 4.2. Run the datacatalog-fileset-processor script - Create the Tag Templates
+### 2.2. Run the datacatalog-fileset-processor script - Create the Filesets Entry Groups and Entries
 
 - Python + virtualenv
 
@@ -106,7 +106,7 @@ described as follows:
 datacatalog-fileset-processor filesets create --csv-file CSV_FILE_PATH
 ```
 
-### 4.3. Run the datacatalog-fileset-processor script - Delete the Tag Templates
+### 2.3. Run the datacatalog-fileset-processor script - Delete the Filesets Entry Groups and Entries
 
 - Python + virtualenv
 
