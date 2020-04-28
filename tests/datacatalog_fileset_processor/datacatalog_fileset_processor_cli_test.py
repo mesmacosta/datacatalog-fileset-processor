@@ -21,7 +21,7 @@ class DatacatalogFilesetProcessorCLITest(unittest.TestCase):
                 'fileset_datasource_processor.'
                 'FilesetDatasourceProcessor')
     def test_run_create_filests_should_call_correct_method(
-        self, mock_fileset_datasource_processor):  # noqa: E125
+            self, mock_fileset_datasource_processor):  # noqa: E125
 
         datacatalog_fileset_processor_cli.DatacatalogFilesetProcessorCLI.run(
             ['filesets', 'create', '--csv-file', 'test.csv'])
@@ -35,7 +35,7 @@ class DatacatalogFilesetProcessorCLITest(unittest.TestCase):
                 'fileset_datasource_processor.'
                 'FilesetDatasourceProcessor')
     def test_run_delete_filesets_should_call_correct_method(
-        self, mock_fileset_datasource_processor):  # noqa: E125
+            self, mock_fileset_datasource_processor):  # noqa: E125
 
         datacatalog_fileset_processor_cli.DatacatalogFilesetProcessorCLI.run(
             ['filesets', 'delete', '--csv-file', 'test.csv'])

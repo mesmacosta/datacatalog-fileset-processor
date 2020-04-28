@@ -117,6 +117,41 @@ class TagTemplateDatasourceProcessorTest(unittest.TestCase):
 
         self.execute_create_filesets_and_assert()
 
+    def test_create_filesets_from_csv_no_schema_should_succeed(self, mock_read_csv):
+        mock_read_csv.return_value = pd.DataFrame(
+            data={
+                'entry_group_name': [
+                    'projects/uat-env-1/locations/us-central1/entryGroups/entry_group_test_1a',
+                    'projects/uat-env-1/locations/us-central1/entryGroups/entry_group_test_2a',
+                    'projects/uat-env-1/locations/us-central1/entryGroups/entry_group_test_2a'
+                ],
+                'entry_group_display_name': [
+                    'My Fileset Entry Group a', 'My Fileset Entry Group 2',
+                    'My Fileset Entry Group 2'
+                ],
+                'entry_group_description': [
+                    'This Entry Group consists of ....', 'This Entry Group consists of 2....',
+                    'This Entry Group consists of 2....'
+                ],
+                'entry_id': ['entry_test_1', 'entry_test_2', 'entry_test_3'],
+                'entry_display_name': ['My Fileset', 'My Fileset 2', 'My Fileset 3'],
+                'entry_description': [
+                    'This fileset consists of all files for bucket bucket_13c4',
+                    'This fileset consists of all files for bucket bucket_23c4',
+                    'This fileset consists of all files for bucket bucket_33c4'
+                ],
+                'entry_file_patterns': [
+                    'gs://bucket_13c4/*', 'gs://bucket_23c4/*.csv|gs://bucket_23c4/*.png',
+                    'gs://bucket_33c4/*.csv|gs://bucket_33c4/*.png'
+                ],
+                'schema_column_name': [None, None, None],
+                'schema_column_type': [None, None, None],
+                'schema_column_description': [None, None, None],
+                'schema_column_mode': [None, None, None]
+            })
+
+        self.execute_create_filesets_and_assert()
+
     def test_delete_filesets_from_csv_should_succeed(self, mock_read_csv):
         mock_read_csv.return_value = pd.DataFrame(
             data={

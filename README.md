@@ -76,21 +76,26 @@ _This step may be skipped if you're using [Docker](#12-docker)._
 export GOOGLE_APPLICATION_CREDENTIALS=~/credentials/datacatalog-fileset-processor-sa.json
 ```
 
-## 2. Load Templates from CSV file
+## 2. Create Filesets from CSV file
 
-### 2.1. Create a CSV file representing the Templates to be created
+### 2.1. Create a CSV file representing the Entry Groups and Entries to be created
 
-Templates are composed of as many lines as required to represent all of their fields. The columns are
+Filesets are composed of as many lines as required to represent all of their fields. The columns are
 described as follows:
 
-| Column                 | Description                                    | Mandatory |
-| ---                    | ---                                            | ---       |
-| **template_name**      | Resource name of the Tag Template for the Tag. | Y         |
-| **display_name**       | Resource name of the Tag Template for the Tag. | Y         |
-| **field_id**           | Id of the Tag Template field.                  | Y         |
-| **field_display_name** | Display name of the Tag Template field.        | Y         |
-| **field_type**         | Type of the Tag Template field.                | Y         |
-| **enum_values**        | Values for the Enum field.                     | N         |
+| Column                        | Description               | Mandatory |
+| ---                           | ---                       | ---       |
+| **entry_group_name**          | Entry Group Name.         | Y         |
+| **entry_group_display_name**  | Entry Group Display Name. | Y         |
+| **entry_group_description**   | Entry Group Description.  | Y         |
+| **entry_id**                  | Entry ID.                 | Y         |
+| **entry_display_name**        | Entry Display Name.       | Y         |
+| **entry_description**         | Entry Description.        | Y         |
+| **entry_file_patterns**       | Entry File Patterns.      | Y         |
+| **schema_column_name**        | Schema column name.       | N         |
+| **schema_column_type**        | Schema column type.       | N         |
+| **schema_column_description** | Schema column description.| N         |
+| **schema_column_mode**        | Schema column mode.       | N         |
 
 
 ### 4.2. Run the datacatalog-fileset-processor script - Create the Tag Templates
