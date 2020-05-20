@@ -31,8 +31,8 @@ A package to manage Google Cloud Data Catalog Fileset scripts.
     + [1.3.3. Set the environment variables](#133-set-the-environment-variables)
 - [2. Create Filesets from CSV file](#2-create-filesets-from-csv-file)
   * [2.1. Create a CSV file representing the Entry Groups and Entries to be created](#21-create-a-csv-file-representing-the-entry-groups-and-entries-to-be-created)
-  * [2.2. Run the datacatalog-fileset-processor script - Create the Tag Templates](#22-run-the-datacatalog-fileset-processor-script---create-the-tag-templates)
-  * [2.3. Run the datacatalog-fileset-processor script - Delete the Tag Templates](#23-run-the-datacatalog-fileset-processor-script---delete-the-tag-templates)
+  * [2.2. Run the datacatalog-fileset-processor script - Create the Filesets Entry Groups and Entries](#22-run-the-datacatalog-fileset-processor-script---create-the-filesets-entry-groups-and-entries)
+  * [2.3. Run the datacatalog-fileset-processor script - Delete the Filesets Entry Groups and Entries](#23-run-the-datacatalog-fileset-processor-script---delete-the-filesets-entry-groups-and-entries)
 
 <!-- tocstop -->
 
@@ -130,7 +130,7 @@ described as follows:
 | **schema_column_mode**        | Schema column mode.       | N         |
 
 
-### 2.2. Run the datacatalog-fileset-processor script - Create the Tag Templates
+### 2.2. Run the datacatalog-fileset-processor script - Create the Filesets Entry Groups and Entries
 
 - Python + virtualenv
 
@@ -138,7 +138,7 @@ described as follows:
 datacatalog-fileset-processor filesets create --csv-file CSV_FILE_PATH
 ```
 
-### 2.3. Run the datacatalog-fileset-processor script - Delete the Tag Templates
+### 2.3. Run the datacatalog-fileset-processor script - Delete the Filesets Entry Groups and Entries
 
 - Python + virtualenv
 
