@@ -29,7 +29,7 @@ class DatacatalogFilesetProcessorCLITest(unittest.TestCase):
         fileset_datasource_processor = mock_fileset_datasource_processor.return_value
         fileset_datasource_processor.create_entry_groups_and_entries_from_csv.assert_called_once()
         fileset_datasource_processor.create_entry_groups_and_entries_from_csv.assert_called_with(
-            file_path='test.csv')
+            file_path='test.csv', validate_dataflow_sql_types=False)
 
     @mock.patch('datacatalog_fileset_processor.datacatalog_fileset_processor_cli.'
                 'fileset_datasource_processor.'

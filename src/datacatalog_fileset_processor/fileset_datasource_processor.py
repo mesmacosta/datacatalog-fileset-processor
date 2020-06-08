@@ -11,12 +11,15 @@ class FilesetDatasourceProcessor:
     def __init__(self):
         self.__datacatalog_facade = datacatalog_facade.DataCatalogFacade()
 
-    def create_entry_groups_and_entries_from_csv(self, file_path):
+    def create_entry_groups_and_entries_from_csv(self,
+                                                 file_path,
+                                                 validate_dataflow_sql_types=None):
         """
         Creates Entry Groups and Entries, if they don't exist,
           by reading information from a CSV file.
 
         :param file_path: The CSV file path.
+        :param validate_dataflow_sql_types: flag if enabled will validate Data Flow SQL types.
         :return: A list of Tuple (entry_group, entries)
          with all Entry Groups and Entries processed.
         """
@@ -28,7 +31,8 @@ class FilesetDatasourceProcessor:
         dataframe = pd.read_csv(file_path, comment='#')
 
         logging.info('')
-        created_assets = self.__create_entry_groups_and_entries_from_dataframe(dataframe)
+        created_assets = self.__create_entry_groups_and_entries_from_dataframe(
+            dataframe, validate_dataflow_sql_types)
 
         logging.info('')
         logging.info(
@@ -57,14 +61,19 @@ class FilesetDatasourceProcessor:
         logging.info(
             '==== Delete Fileset Entry Groups and Entries from CSV [FINISHED] ===========')
 
-    def __create_entry_groups_and_entries_from_dataframe(self, dataframe):
+    def __create_entry_groups_and_entries_from_dataframe(self,
+                                                         dataframe,
+                                                         validate_dataflow_sql_types=None):
         normalized_df = self.__normalize_dataframe(dataframe)
 
         entry_groups_dict = {'entry_groups': self.__extract_entry_groups_dict(normalized_df)}
 
         created_entry_groups = []
         for entry_group_dict in entry_groups_dict['entry_groups']:
-            created_entry_groups.append(self.__create_entry_groups_from_dict(entry_group_dict))
+            logging.info('')
+            created_entry_groups.append(
+                self.__create_entry_groups_from_dict(entry_group_dict,
+                                                     validate_dataflow_sql_types))
         return created_entry_groups
 
     def __delete_entry_groups_and_entries_from_dataframe(self, dataframe):
@@ -119,7 +128,7 @@ class FilesetDatasourceProcessor:
 
                 entry_group_data = \
                     entry_group_subset.loc[:,
-                                           :constant.FILESETS_ENTRY_GROUP_DESCRIPTION_COLUMN_LABEL]
+                    :constant.FILESETS_ENTRY_GROUP_DESCRIPTION_COLUMN_LABEL]
 
                 entries = self.__extract_entries(
                     key_value, entry_group_subset.loc[:, constant.FILESETS_ENTRY_ID_COLUMN_LABEL:])
@@ -171,7 +180,7 @@ class FilesetDatasourceProcessor:
                 })
         return array
 
-    def __create_entry_groups_from_dict(self, entry_group_dict):
+    def __create_entry_groups_from_dict(self, entry_group_dict, validate_dataflow_sql_types=None):
         entry_group_name = entry_group_dict['name']
         entries_dict = entry_group_dict['entries']
         entry_group = datacatalog_entity_factory.DataCatalogEntityFactory.make_entry_group(
@@ -184,17 +193,28 @@ class FilesetDatasourceProcessor:
         except exceptions.AlreadyExists:
             logging.warning('Entry Group %s already exists.', entry_group_name)
 
-        created_entries = self.__create_entries_from_dict(entries_dict, entry_group_name)
+        created_entries = self.__create_entries_from_dict(entries_dict, entry_group_name,
+                                                          validate_dataflow_sql_types)
         return entry_group_name, created_entries
 
-    def __create_entries_from_dict(self, entries_dict, entry_group_name):
+    def __create_entries_from_dict(self,
+                                   entries_dict,
+                                   entry_group_name,
+                                   validate_dataflow_sql_types=None):
         created_entries = []
         for entry_dict in entries_dict:
             entry_name = entry_dict['name']
-            entry = datacatalog_entity_factory.DataCatalogEntityFactory.make_entry(entry_dict)
-            self.__datacatalog_facade.upsert_entry(entry_group_name, entry_name, entry_dict['id'],
-                                                   entry)
-            created_entries.append(entry_name)
+            schema_columns = entry_dict.get('schema_columns')
+
+            if (self.__is_valid_dataflow_sql_types(schema_columns, validate_dataflow_sql_types)
+                    or validate_dataflow_sql_types is None):
+
+                entry = datacatalog_entity_factory.DataCatalogEntityFactory.make_entry(entry_dict)
+                self.__datacatalog_facade.upsert_entry(entry_group_name, entry_name,
+                                                       entry_dict['id'], entry)
+                created_entries.append(entry_name)
+            else:
+                logging.warning('Entry %s skipped, invalid Dataflow SQL type.', entry_name)
         return created_entries
 
     @classmethod
@@ -216,3 +236,21 @@ class FilesetDatasourceProcessor:
                 }
 
         return id_to_column_schema_map
+
+    @classmethod
+    def __is_valid_dataflow_sql_types(cls, schema_columns, validate_dataflow_sql_types):
+        error_msgs = []
+        if schema_columns and validate_dataflow_sql_types:
+            for column_id, items in schema_columns.items():
+                if pd.notna(column_id):
+                    column_type = items['schema_column_type']
+                    if items['schema_column_type'] not in constant.DATAFLOW_SQL_VALID_TYPES:
+                        error_msgs.append('column: {} type: {} not in allowed '
+                                          'Dataflow SQL types: {}'.format(
+                                              column_id, column_type,
+                                              constant.DATAFLOW_SQL_VALID_TYPES))
+        if error_msgs:
+            logging.warning(error_msgs)
+            return False
+        else:
+            return True

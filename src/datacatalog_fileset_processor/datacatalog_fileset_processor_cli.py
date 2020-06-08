@@ -45,24 +45,29 @@ class DatacatalogFilesetProcessorCLI:
                                                        help='Delete Filesets Entry Groups'
                                                        ' and Entries from CSV')
         delete_filesets_parser.add_argument('--csv-file',
-                                            help='CSV file with Fileset ENtries information',
+                                            help='CSV file with Fileset Entries information',
                                             required=True)
         delete_filesets_parser.set_defaults(func=cls.__delete_filesets_entry_groups_and_entries)
 
     @classmethod
     def add_create_filesets_cmd(cls, subparsers):
-        create_tag_templates_parser = subparsers.add_parser('create',
-                                                            help='Create Tag Templates from CSV')
-        create_tag_templates_parser.add_argument('--csv-file',
-                                                 help='CSV file with Tag Templates information',
-                                                 required=True)
-        create_tag_templates_parser.set_defaults(
-            func=cls.__create_filesets_entry_groups_and_entries)
+        create_filesets_parser = subparsers.add_parser('create',
+                                                       help='Create Filesets Entry Groups'
+                                                       ' and Entries from CSV')
+        create_filesets_parser.add_argument('--csv-file',
+                                            help='CSV file with Filesets Entries information',
+                                            required=True)
+        create_filesets_parser.add_argument('--validate-dataflow-sql-types',
+                                            help='Flag if enabled will validate Data Flow SQL '
+                                            'Types',
+                                            action='store_true')
+        create_filesets_parser.set_defaults(func=cls.__create_filesets_entry_groups_and_entries)
 
     @classmethod
     def __create_filesets_entry_groups_and_entries(cls, args):
         fileset_datasource_processor.FilesetDatasourceProcessor(
-        ).create_entry_groups_and_entries_from_csv(file_path=args.csv_file)
+        ).create_entry_groups_and_entries_from_csv(
+            file_path=args.csv_file, validate_dataflow_sql_types=args.validate_dataflow_sql_types)
 
     @classmethod
     def __delete_filesets_entry_groups_and_entries(cls, args):
