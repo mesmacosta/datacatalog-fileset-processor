@@ -47,7 +47,7 @@ class FilesetDatasourceProcessor:
 
         logging.info('')
         logging.info('Reading CSV file: %s...', file_path)
-        dataframe = pd.read_csv(file_path)
+        dataframe = pd.read_csv(file_path, comment='#')
 
         logging.info('')
         logging.info('Deleting the Entries...')
