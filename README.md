@@ -118,17 +118,19 @@ described as follows:
 | Column                        | Description               | Mandatory |
 | ---                           | ---                       | ---       |
 | **entry_group_name**          | Entry Group Name.         | Y         |
-| **entry_group_display_name**  | Entry Group Display Name. | Y         |
-| **entry_group_description**   | Entry Group Description.  | Y         |
+| **entry_group_display_name**  | Entry Group Display Name. | N         |
+| **entry_group_description**   | Entry Group Description.  | N         |
 | **entry_id**                  | Entry ID.                 | Y         |
 | **entry_display_name**        | Entry Display Name.       | Y         |
-| **entry_description**         | Entry Description.        | Y         |
+| **entry_description**         | Entry Description.        | N         |
 | **entry_file_patterns**       | Entry File Patterns.      | Y         |
 | **schema_column_name**        | Schema column name.       | N         |
 | **schema_column_type**        | Schema column type.       | N         |
 | **schema_column_description** | Schema column description.| N         |
 | **schema_column_mode**        | Schema column mode.       | N         |
 
+Please note that the `schema_column_type` is an open string field and accept anything, if you want 
+to use your fileset with Dataflow SQL, follow the data-types in the [official docs][10].
 
 ### 2.2. Run the datacatalog-fileset-processor script - Create the Filesets Entry Groups and Entries
 
@@ -149,6 +151,8 @@ datacatalog-fileset-processor filesets delete --csv-file CSV_FILE_PATH
 *TIPS* 
 - [sample-input/create-filesets][4] for reference;
 
+- If you want to create filesets without schema:
+[sample-input/create-filesets/fileset-entry-opt-1-all-metadata-no-schema.csv][4] for reference;
 
 [1]: https://circleci.com/gh/mesmacosta/datacatalog-fileset-processor.svg?style=svg
 [2]: https://circleci.com/gh/mesmacosta/datacatalog-fileset-processor
@@ -159,3 +163,4 @@ datacatalog-fileset-processor filesets delete --csv-file CSV_FILE_PATH
 [7]: https://img.shields.io/github/license/mesmacosta/datacatalog-fileset-processor.svg
 [8]: https://img.shields.io/github/issues/mesmacosta/datacatalog-fileset-processor.svg
 [9]: https://github.com/mesmacosta/datacatalog-fileset-processor/issues
+[10]: https://cloud.google.com/dataflow/docs/reference/sql/data-types

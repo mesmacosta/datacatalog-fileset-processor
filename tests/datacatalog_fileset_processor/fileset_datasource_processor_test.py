@@ -71,8 +71,7 @@ class TagTemplateDatasourceProcessorTest(unittest.TestCase):
                 'entry_display_name': ['My Fileset', 'My Fileset 2', 'My Fileset 3'],
                 'entry_description': [
                     'This fileset consists of all files for bucket bucket_13c4',
-                    'This fileset consists of all files for bucket bucket_23c4',
-                    'This fileset consists of all files for bucket bucket_33c4'
+                    'This fileset consists of all files for bucket bucket_23c4', None
                 ],
                 'entry_file_patterns': [
                     'gs://bucket_13c4/*', 'gs://bucket_23c4/*.csv|gs://bucket_23c4/*.png',

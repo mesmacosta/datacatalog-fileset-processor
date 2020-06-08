@@ -8,8 +8,14 @@ class DataCatalogEntityFactory:
     @classmethod
     def make_entry_group(cls, entry_group_dict):
         entry_group = datacatalog_v1.types.EntryGroup()
-        entry_group.display_name = entry_group_dict['display_name']
-        entry_group.description = entry_group_dict['description']
+
+        display_name = entry_group_dict.get('display_name')
+        if pd.notna(display_name):
+            entry_group.display_name = display_name
+
+        description = entry_group_dict['description']
+        if pd.notna(description):
+            entry_group.description = description
 
         return entry_group
 
@@ -17,7 +23,10 @@ class DataCatalogEntityFactory:
     def make_entry(cls, entry_dict):
         entry = datacatalog_v1.types.Entry()
         entry.display_name = entry_dict['display_name']
-        entry.description = entry_dict['description']
+        description = entry_dict.get('description')
+        if pd.notna(description):
+            entry.description = description
+
         entry.gcs_fileset_spec.file_patterns.extend(entry_dict['file_patterns'])
         entry.type = datacatalog_v1.enums.EntryType.FILESET
 
@@ -28,11 +37,11 @@ class DataCatalogEntityFactory:
             if pd.notna(column_id):
                 # Create the Schema, this is optional.
                 columns.append(
-                    datacatalog_v1.types.ColumnSchema(column=column_id,
-                                                      type=items['schema_column_type'],
-                                                      description=items[
-                                                          'schema_column_description'],
-                                                      mode=items['schema_column_mode']))
+                    datacatalog_v1.types.ColumnSchema(
+                        column=column_id,
+                        type=items['schema_column_type'],
+                        description=items['schema_column_description'],
+                        mode=items['schema_column_mode']))
 
         entry.schema.columns.extend(columns)
         return entry

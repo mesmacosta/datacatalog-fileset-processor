@@ -100,6 +100,9 @@ class FilesetDatasourceProcessor:
         rebuilt_df = pd.concat([filled_subset, ordered_df[constant.FILESETS_NON_FILLABLE_COLUMNS]],
                                axis=1)
 
+        # Strip spaces
+        rebuilt_df = rebuilt_df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
+
         return rebuilt_df
 
     def __extract_entry_groups_dict(self, dataframe):
@@ -109,26 +112,28 @@ class FilesetDatasourceProcessor:
         for key_value in key_values:
             # We use an array with: [key_value] to make sure the dataframe loc
             # always returns a dataframe, and not a Series
-            entry_group_subset = dataframe.loc[[key_value]]
+            if pd.notna(key_value):
+                entry_group_subset = dataframe.loc[[key_value]]
 
-            dataframe.drop(key_value, inplace=True)
+                dataframe.drop(key_value, inplace=True)
 
-            entry_group_data = \
-                entry_group_subset.loc[:, :constant.FILESETS_ENTRY_GROUP_DESCRIPTION_COLUMN_LABEL]
+                entry_group_data = \
+                    entry_group_subset.loc[:,
+                                           :constant.FILESETS_ENTRY_GROUP_DESCRIPTION_COLUMN_LABEL]
 
-            entries = self.__extract_entries(
-                key_value, entry_group_subset.loc[:, constant.FILESETS_ENTRY_ID_COLUMN_LABEL:])
+                entries = self.__extract_entries(
+                    key_value, entry_group_subset.loc[:, constant.FILESETS_ENTRY_ID_COLUMN_LABEL:])
 
-            array.append({
-                'name':
-                key_value,
-                'display_name':
-                entry_group_data[constant.FILESETS_ENTRY_GROUP_DISPLAY_NAME_COLUMN_LABEL][0],
-                'description':
-                entry_group_data[constant.FILESETS_ENTRY_GROUP_DESCRIPTION_COLUMN_LABEL][0],
-                'entries':
-                entries
-            })
+                array.append({
+                    'name':
+                    key_value,
+                    'display_name':
+                    entry_group_data[constant.FILESETS_ENTRY_GROUP_DISPLAY_NAME_COLUMN_LABEL][0],
+                    'description':
+                    entry_group_data[constant.FILESETS_ENTRY_GROUP_DESCRIPTION_COLUMN_LABEL][0],
+                    'entries':
+                    entries
+                })
         return array
 
     def __extract_entries(self, entry_group_name, dataframe):
@@ -136,33 +141,34 @@ class FilesetDatasourceProcessor:
         key_values = dataframe.index.unique().tolist()
         array = []
         for key_value in key_values:
-            # We use an array with: [key_value] to make sure the dataframe loc
-            # always returns a dataframe, and not a Series
-            entry_subset = dataframe.loc[[key_value]]
+            if pd.notna(key_value):
+                # We use an array with: [key_value] to make sure the dataframe loc
+                # always returns a dataframe, and not a Series
+                entry_subset = dataframe.loc[[key_value]]
 
-            entry_name = '{}/entries/{}'.format(entry_group_name, key_value)
+                entry_name = '{}/entries/{}'.format(entry_group_name, key_value)
 
-            schema_columns_subset = \
-                entry_subset.loc[:, constant.FILESETS_ENTRY_SCHEMA_COLUMN_NAME_COLUMN_LABEL:]
+                schema_columns_subset = \
+                    entry_subset.loc[:, constant.FILESETS_ENTRY_SCHEMA_COLUMN_NAME_COLUMN_LABEL:]
 
-            schema_columns_dict = self.__convert_schema_columns_dataframe_to_dict(
-                schema_columns_subset)
+                schema_columns_dict = self.__convert_schema_columns_dataframe_to_dict(
+                    schema_columns_subset)
 
-            array.append({
-                'id':
-                key_value,
-                'name':
-                entry_name,
-                'display_name':
-                entry_subset['entry_display_name'][0],
-                'description':
-                entry_subset['entry_description'][0],
-                'file_patterns':
-                entry_subset['entry_file_patterns'][0].split(
-                    constant.FILE_PATTERNS_VALUES_SEPARATOR),
-                'schema_columns':
-                schema_columns_dict
-            })
+                array.append({
+                    'id':
+                    key_value,
+                    'name':
+                    entry_name,
+                    'display_name':
+                    entry_subset['entry_display_name'][0],
+                    'description':
+                    entry_subset['entry_description'][0],
+                    'file_patterns':
+                    entry_subset['entry_file_patterns'][0].split(
+                        constant.FILE_PATTERNS_VALUES_SEPARATOR),
+                    'schema_columns':
+                    schema_columns_dict
+                })
         return array
 
     def __create_entry_groups_from_dict(self, entry_group_dict):
