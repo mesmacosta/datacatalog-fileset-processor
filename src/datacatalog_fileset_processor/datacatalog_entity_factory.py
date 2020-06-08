@@ -1,3 +1,5 @@
+import pandas as pd
+
 from google.cloud import datacatalog_v1
 
 
@@ -23,13 +25,14 @@ class DataCatalogEntityFactory:
 
         columns = []
         for column_id, items in schema_columns.items():
-
-            # Create the Schema, this is optional.
-            columns.append(
-                datacatalog_v1.types.ColumnSchema(column=column_id,
-                                                  type=items['schema_column_type'],
-                                                  description=items['schema_column_description'],
-                                                  mode=items['schema_column_mode']))
+            if pd.notna(column_id):
+                # Create the Schema, this is optional.
+                columns.append(
+                    datacatalog_v1.types.ColumnSchema(column=column_id,
+                                                      type=items['schema_column_type'],
+                                                      description=items[
+                                                          'schema_column_description'],
+                                                      mode=items['schema_column_mode']))
 
         entry.schema.columns.extend(columns)
         return entry
