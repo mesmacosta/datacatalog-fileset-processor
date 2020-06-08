@@ -128,7 +128,7 @@ class FilesetDatasourceProcessor:
 
                 entry_group_data = \
                     entry_group_subset.loc[:,
-                    :constant.FILESETS_ENTRY_GROUP_DESCRIPTION_COLUMN_LABEL]
+                                           :constant.FILESETS_ENTRY_GROUP_DESCRIPTION_COLUMN_LABEL]
 
                 entries = self.__extract_entries(
                     key_value, entry_group_subset.loc[:, constant.FILESETS_ENTRY_ID_COLUMN_LABEL:])
