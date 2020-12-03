@@ -8,7 +8,7 @@ with open('HISTORY.md') as history_file:
 
 setuptools.setup(
     name='datacatalog-fileset-processor',
-    version='0.1.4',
+    version='0.1.5',
     author='Marcelo Miranda',
     author_email='mesmacosta@gmail.com',
     description='A package to manage Google Cloud Data Catalog'
@@ -23,7 +23,7 @@ setuptools.setup(
     },
     include_package_data=True,
     install_requires=(
-        'google-cloud-datacatalog',
+        'google-cloud-datacatalog>=1,<2',
         'pandas',
     ),
     setup_requires=('pytest-runner', ),
